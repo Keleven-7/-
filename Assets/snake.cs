@@ -79,6 +79,11 @@ public class Snake : MonoBehaviour
         this.transform.position= Vector3.zero;
     }
 
+    private void s_up()
+    {
+
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Food")
@@ -88,6 +93,10 @@ public class Snake : MonoBehaviour
         else if(other.tag == "Obstacle")
         {
             ResetState();
+        }
+        else if(other.tag=="speedup")
+        {
+            s_up();
         }
     }
 }
