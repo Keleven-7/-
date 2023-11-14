@@ -9,7 +9,8 @@ public class Snake : MonoBehaviour
     private List<Transform> _segments = new List<Transform>();
     public Transform segmentPrefab;
     public int initialSize = 3;
-
+    public float speed = 0.15f;//通过修改fixupdate频率模拟速度
+    public bool reverse_value = false; //通过在输入时判断实现反转
     private void Start()
     {
         //_segments = new List<Transform>();
@@ -19,26 +20,53 @@ public class Snake : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        if (reverse_value)//如果反转
         {
-            if (_direction != Vector2.down)
-                _direction = Vector2.up;
+            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                if (_direction != Vector2.up)
+                    _direction = Vector2.down;
+            }
+            else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                if (_direction != Vector2.down)
+                    _direction = Vector2.up;
+            }
+            else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                if (_direction != Vector2.left)
+                    _direction = Vector2.right;
+            }
+            else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                if (_direction != Vector2.right)
+                    _direction = Vector2.left;
+            }
         }
-        else if(Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        else
         {
-            if (_direction != Vector2.up)
-                _direction = Vector2.down;
+            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                if (_direction != Vector2.down)
+                    _direction = Vector2.up;
+            }
+            else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                if (_direction != Vector2.up)
+                    _direction = Vector2.down;
+            }
+            else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                if (_direction != Vector2.right)
+                    _direction = Vector2.left;
+            }
+            else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                if (_direction != Vector2.left)
+                    _direction = Vector2.right;
+            }
         }
-        else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            if (_direction != Vector2.right)
-                _direction = Vector2.left;
-        }
-        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            if (_direction != Vector2.left)
-                _direction = Vector2.right;
-        }
+        
     }
     private void FixedUpdate()
     {
@@ -52,6 +80,7 @@ public class Snake : MonoBehaviour
             Mathf.Round(this.transform.position.y) + _direction.y,
             0.0f
         );
+        Time.fixedDeltaTime = speed;//速度模拟
     }
 
     private void Grow()
@@ -82,8 +111,13 @@ public class Snake : MonoBehaviour
 
     private void end_up()
     {
-        CancelInvoke("FixedUpdate");
-    }//停止重复调用
+        speed = 0.15f;
+    }
+
+    private void end_reverse()
+    {
+        reverse_value = false;
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -97,8 +131,14 @@ public class Snake : MonoBehaviour
         }
         else if(other.tag=="speedup")
         {
-            InvokeRepeating("FixedUpdate", 0.0f, 0.1f); //没写速度，用重复调用fixupdate更新模拟加速
-            Invoke("end_up", 5);//5s后停止“加速”
+            speed = speed*2/3;
+            CancelInvoke("end_up");//重置道具时间
+            Invoke("end_up", 5);//在5s后结束道具效果
+        }
+        else if(other.tag=="reverse")
+        {
+            reverse_value = true;
+            Invoke("end_reverse", 5);//在5s后结束道具效果
         }
     }
 }
