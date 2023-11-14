@@ -1,4 +1,5 @@
 //using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -79,10 +80,10 @@ public class Snake : MonoBehaviour
         this.transform.position= Vector3.zero;
     }
 
-    private void s_up()
+    private void end_up()
     {
-
-    }
+        CancelInvoke("FixedUpdate");
+    }//停止重复调用
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -96,7 +97,8 @@ public class Snake : MonoBehaviour
         }
         else if(other.tag=="speedup")
         {
-            s_up();
+            InvokeRepeating("FixedUpdate", 0.0f, 0.1f); //没写速度，用重复调用fixupdate更新模拟加速
+            Invoke("end_up", 5);//5s后停止“加速”
         }
     }
 }

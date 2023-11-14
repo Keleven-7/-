@@ -10,11 +10,7 @@ public class speedup:MonoBehaviour
     public float maxTime = 10f;//生成道具间隔
 
     private float timer;
-    private void DestroyItem()//销毁道具
-    {
-            Destroy(GameObject.FindGameObjectWithTag("Item"));
-    }
-
+   
     private void RandomizePosition()
     {
         Bounds bounds = this.gridArea.bounds;
@@ -29,7 +25,6 @@ public class speedup:MonoBehaviour
             {
                 RandomizePosition();
                 float randomTime = Random.Range(minTime, maxTime);
-                Invoke("DestroyItem", randomTime);
                 timer = randomTime;
             }
             timer -= Time.deltaTime;
