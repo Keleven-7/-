@@ -8,6 +8,8 @@ TagManager:
   - Obstacle
   - speedup
   - reverse
+  - ignore
+  - spring
   layers:
   - Default
   - TransparentFX
